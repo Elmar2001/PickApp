@@ -12,7 +12,6 @@ class Store(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     location = models.CharField(max_length=128)
     logo = models.URLField()
-    pass
 
 
 class Listing(models.Model):
