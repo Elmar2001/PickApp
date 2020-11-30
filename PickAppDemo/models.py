@@ -8,19 +8,20 @@ class User(AbstractUser):
     pass
 
 
-class Store(AbstractUser):
+class Store(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     location = models.CharField(max_length=128)
     logo = models.URLField()
     pass
 
 
 class Listing(models.Model):
-    store = models.ForeignKey(User, on_delete=models.CASCADE)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
     title = models.CharField(max_length=128)
     image = models.URLField()
     content = models.TextField(max_length=512)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    stock = models.DecimalField(max_digits=10, default=0)
+    stock = models.DecimalField(max_digits=10, decimal_places=0, default=0)
     category = models.CharField(max_length=128)
     active = models.BooleanField(default=True)
 
