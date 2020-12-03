@@ -7,11 +7,11 @@ from django.contrib.auth.decorators import login_required
 
 from .models import *
 
+
 # Create your views here.
 
 
 def index(request):
-
     return render(request, "PickAppDemo/index.html")
 
 
@@ -113,5 +113,44 @@ def register_store(request):
         return render(request, "PickAppDemo/storeRegister.html")
 
 
+@login_required(login_url='/login')
 def create(request):
-    pass
+    if request.method == "GET":
+        return render(request, "PickAppDemo/create.html")
+
+    store_user = request.user
+    title = request.POST.get("title")
+    image = request.POST.get("image")
+    content = request.POST.get("content")
+    price = request.POST.get("price")
+    stock = request.POST.get("stock")
+    category = request.POST.get("category")
+
+    if image == "":
+        image = "https://i.imgur.com/GQPN5Q9.jpg"
+
+    if price == "":
+        price = 0
+
+    if stock == "":
+        stock = 0
+
+    store = Store.objects.get(user=store_user)
+    new_listing = Listing(store=store, title=title, image=image, content=content, price=price,
+                          stock=stock, category=category)
+
+    new_listing.save()
+    # messages.add_message(request, messages.SUCCESS, "Listing created")
+    return HttpResponseRedirect(reverse("view", args=(new_listing.pk,)))
+
+
+def view_listing(request, pid):
+    listing = Listing.objects.get(pk=pid)
+    print("pid", pid)
+
+    return render(request, "PickAppDemo/listing.html", {
+        "listing": listing,
+    })
+
+
+def orders(request):

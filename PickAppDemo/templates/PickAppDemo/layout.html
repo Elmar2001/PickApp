@@ -20,7 +20,7 @@
 </div>
 <ul class="nav">
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
+        <a class="nav-link" href="{% url 'index' %}">Products</a>
     </li>
     {% if user.is_authenticated %}
 
@@ -28,7 +28,12 @@
         <li class="nav-item">
             <a class="nav-link" href="{% url 'create' %}">Create</a>
         </li>
-            {% endif %}
+        {% endif %}
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'orders' %}">Orders</a>
+        </li>
+
         <li class="nav-item">
             <a class="nav-link" href="{% url 'categories' %}">Categories</a>
         </li>
