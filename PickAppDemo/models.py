@@ -5,7 +5,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    pass
+    is_customer = models.BooleanField('customer_status', default=False)
+    is_store = models.BooleanField('store_status', default=False)
 
 
 class Store(models.Model):

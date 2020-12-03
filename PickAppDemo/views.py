@@ -22,7 +22,10 @@ def login_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
-
+        print("LOGIN")
+        print(username)
+        print(password)
+        print(user)
         # Check if authentication successful
         if user is not None:
             login(request, user)
@@ -59,7 +62,11 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            # user = User.objects.create_user(username, email, password)
+            # user.is_customer=True;
+            user = User(username=username, email=email, is_customer=True)
+            user.set_password(password)
+
             user.save()
         except IntegrityError:
             return render(request, "PickAppDemo/register.html", {
@@ -88,11 +95,13 @@ def register_store(request):
 
         # Attempt to create new user
         try:
-            store_user = User.objects.create_user(username, email, password)
-            store_user.is_store = True
+            # store_user = User.objects.create_user(username, email, password)
+            store_user = User(username=username, email=email, is_store=True)
+            store_user.set_password(password)
 
             store = Store(user=store_user, location=location, logo=logo)
-            # store_user.save()
+
+            store_user.save()
             store.save()
         except IntegrityError:
             return render(request, "PickAppDemo/storeRegister.html", {
@@ -103,3 +112,6 @@ def register_store(request):
     else:
         return render(request, "PickAppDemo/storeRegister.html")
 
+
+def create(request):
+    pass
