@@ -158,6 +158,8 @@ def view_listing(request, pid):
 
 
 def orders(request):
+    if request.method == "POST":
+        pass
     orders = Orders.objects.filter(user=request.user)
     return render(request, "PickAppDemo/orders.html", {
         "orders": orders
