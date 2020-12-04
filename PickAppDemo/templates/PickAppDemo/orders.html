@@ -1,8 +1,8 @@
 {% extends "PickAppDemo/layout.html" %}
 
 {% block body %}
-    {% if products %}
-        {% for listing in products %}
+    {% if orders %}
+        {% for listing in orders %}
 
             <img src="{{ listing.image }}" alt="Listing Image" height="80px" style="float: left; margin: 2px 15px; ">
             Title: <a href="/view/{{ listing.pk }}"><strong>{{ listing.title }}</strong></a><br>

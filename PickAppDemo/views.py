@@ -12,7 +12,11 @@ from .models import *
 
 
 def index(request):
-    return render(request, "PickAppDemo/index.html")
+    products = Listing.objects.filter(active=True)
+
+    return render(request, "PickAppDemo/index.html", {
+        "products": products
+    })
 
 
 def login_view(request):
@@ -154,3 +158,7 @@ def view_listing(request, pid):
 
 
 def orders(request):
+    orders = Orders.objects.filter(user=request.user)
+    return render(request, "PickAppDemo/orders.html", {
+        "orders": orders
+    })

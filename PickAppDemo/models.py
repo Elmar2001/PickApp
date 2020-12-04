@@ -26,7 +26,7 @@ class Listing(models.Model):
     active = models.BooleanField(default=True)
 
 
-class Cart(models.Model):
+class Orders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
 
