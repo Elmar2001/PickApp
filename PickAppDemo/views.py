@@ -164,3 +164,29 @@ def orders(request):
     return render(request, "PickAppDemo/orders.html", {
         "orders": orders
     })
+
+
+def search(request):
+    if request.method == "POST":
+        query = request.POST.get("query")
+        results = Listing.objects.filter(title=query)
+        return render(request, "PickAppDemo/results.html", {
+            "results": results
+        })
+    return render(request, "PickAppDemo/search.html")
+    pass
+
+
+def categories(request):
+
+    listings = Listing.objects.all()
+    category_list = []
+
+    for listing in listings:
+        if listing.category not in category_list and listing.category != "":
+            category_list.append(listing.category)
+
+    return render(request, "PickAppDemo/categories.html", {
+        "categories": categories
+    })
+

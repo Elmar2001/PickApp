@@ -1,0 +1,13 @@
+{% extends "PickAppDemo/layout.html" %}
+{% block title %}
+    Search products
+{% endblock %}
+
+{% block body %}
+    <form class="creating" method="post">
+    {% csrf_token %}
+        <input class="form-control" type="text" name="query" placeholder="Enter query" style="margin: 10px">
+        <input class="btn btn-primary" type="submit" name="" value="Search" style="margin: 10px">
+    </form>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "PickAppDemo/layout.html" %}
+{% block title %}
+    Categories
+{% endblock %}
+
+{% block body %}
+    <h2>Categories:</h2>
+    <ul>
+        {% for category in categories %}
+            <li><a href="/category/{{ category }}">{{ category }}</a></li>
+            <hr>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

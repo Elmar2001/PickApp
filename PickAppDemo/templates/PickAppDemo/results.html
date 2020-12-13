@@ -1,0 +1,21 @@
+{% extends "PickAppDemo/layout.html" %}
+
+{% block title %}
+    Search results
+{% endblock %}
+
+{% block body %}
+    {% if results %}
+
+        {% for listing in results %}
+            <img src="{{ listing.image }}" alt="Listing Image" height="80px" style="float: left; margin: 2px 15px; ">
+            Title: <a href="/view/{{ listing.pk }}"><strong>{{ listing.title }}</strong></a><br>
+            Price: <strong>${{ listing.price }}</strong><br>
+            Store: <strong>{{ listing.store.user }}</strong>
+            <hr>
+        {% endfor %}
+
+    {% else %}
+        No result
+    {% endif %}
+{% endblock %}
