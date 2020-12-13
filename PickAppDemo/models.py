@@ -36,5 +36,8 @@ class Listing(models.Model):
 class Orders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
-    quantity = models.DecimalField(max_digits=19, decimal_places=2, default=1)
+    quantity = models.DecimalField(max_digits=19, decimal_places=0, default=1)
+
+    def __str__(self):
+        return f"{self.user} purchased {self.quantity} {self.listing}"
 

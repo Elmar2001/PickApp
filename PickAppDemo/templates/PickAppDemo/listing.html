@@ -36,6 +36,7 @@
     <br>
     <hr>
 
+    {% if listing.active %}
     <form class="" action="/order/{{ listing.pk }}" method="post">
         {% csrf_token %}
         Quantity: <input class="form-control bfh-number" value="quantity" style="width: 50px;margin:10px" type="number"
@@ -43,6 +44,7 @@
                          min="1" max={{ listing.stock }}>
         <input class="btn btn-primary" type="submit" value="Order">
     </form>
+    {% endif %}
 
 
 {% endblock %}

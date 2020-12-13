@@ -159,8 +159,8 @@ def view_listing(request, pid):
         new_order.save()
         listing.stock -= quantity
 
-        if (listing.stock == 0):
-            listing.active == False
+        if listing.stock == 0:
+            listing.active = False
 
         listing.save()
         messages.add_message(request, messages.SUCCESS, "Order successful")
