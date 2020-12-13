@@ -8,9 +8,11 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("register/store", views.register_store, name="register_store"),
     path("categories", views.categories, name="categories"),
+    path("category/<str:ctg>", views.get_category, name="get_category"),
     path("create", views.create, name="create"),
     path("view/<int:pid>", views.view_listing, name="view"),
     path("orders", views.orders, name="orders"),
+    path("order/<int:pid>", views.view_listing, name="order"),
     path("search", views.search, name="search"),
 
 ]

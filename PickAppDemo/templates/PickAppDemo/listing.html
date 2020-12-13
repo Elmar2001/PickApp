@@ -11,13 +11,6 @@
     {% endif %}
 
     {% if user.is_authenticated %}
-        {#        <!-- Watchlist -->#}
-        {#        <form class="" action="/addwatchlist/{{ listing.pk }}" method="post">#}
-        {#            {% csrf_token %}#}
-        {#            <input class="btn btn-primary" type="submit" name="" value="Add to Watchlist"#}
-        {#                   style="background-color: green; margin: 10px;">#}
-        {#        </form>#}
-
         {% if listing.active %}
             <form class="" action="/close/{{ listing.id }}" method="post">
                 {% csrf_token %}
@@ -34,7 +27,7 @@
         <li>Category: <strong>{{ listing.category }}</strong></li>
         <li>Sold by: <strong>{{ listing.store.user }}</strong></li>
         <li>Price: <strong>${{ listing.price }}</strong></li>
-        <li>Stock: <strong>${{ listing.stock }}</strong></li>
+        <li>Stock: <strong>{{ listing.stock }}</strong></li>
 
     </ul>
     <hr>
@@ -44,52 +37,12 @@
     <hr>
 
     <form class="" action="/order/{{ listing.pk }}" method="post">
-
-        Quantity: <input class="form-control bfh-number" value="quantity" style="width: 50px;margin:10px" type="number" name="quantity"
+        {% csrf_token %}
+        Quantity: <input class="form-control bfh-number" value="quantity" style="width: 50px;margin:10px" type="number"
+                         name="quantity"
                          min="1" max={{ listing.stock }}>
         <input class="btn btn-primary" type="submit" value="Order">
     </form>
 
 
-    {#    <!-- Bids -->#}
-    {#    {% if user.is_authenticated %}#}
-    {#        <h4>Add your Bid: </h4>#}
-    {#        <form class="" action="/view/{{ listing.pk }}" method="post">#}
-    {#            {% csrf_token %}#}
-    {#            <input type="text" name="bid" value="" placeholder="Bid">#}
-    {#            <input class="btn btn-primary" type="submit" name="" value="Bid Now">#}
-    {#        </form>#}
-    {#    {% endif %}#}
-
-    {#    <hr style="top: 15px">#}
-    {#    {% if bids %}#}
-    {#        <h4>Bids by other users: </h4>#}
-    {#        {% for bid in bids %}#}
-    {#            <p>{{ bid.user }} bids <strong>${{ bid.amount }}</strong>.</p>#}
-    {#            <hr>#}
-    {#        {% endfor %}#}
-    {#    {% endif %}#}
-    {#    <hr style="border: 5px">#}
-    {#    <!-- Comments -->#}
-    {#    <h4>Comments: </h4>#}
-    {#    {% if comments %}#}
-    {#        {% for comment in comments %}#}
-    {#            <p><strong>{{ comment.user }}</strong> says:</p>#}
-    {#            {{ comment.comment }}#}
-    {#            <hr>#}
-    {#        {% endfor %}#}
-    {#    {% else %}#}
-    {#        <p>Be the first to comment.</p>#}
-    {#    {% endif %}#}
-    {#    {% if user.is_authenticated %}#}
-    {#        <h4>Comment:</h4>#}
-    {#        <form class="" action="/comment/{{ listing.pk }}" method="post">#}
-    {#            {% csrf_token %}#}
-    {#            <textarea class="form-control" name="comment" rows="8" cols="80" style="margin: 10px"></textarea>#}
-    {#            <input class="btn btn-primary" type="submit" name="" value="Post Comment" style="margin: 10px">#}
-    {#        </form>#}
-    {#    {% endif %}#}
-    {#    <hr>#}
-
 {% endblock %}
-

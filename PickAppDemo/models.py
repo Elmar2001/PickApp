@@ -14,6 +14,10 @@ class Store(models.Model):
     location = models.CharField(max_length=128)
     logo = models.URLField()
 
+    def __str__(self):
+        return f"{self.user}"
+
+
 
 class Listing(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
@@ -25,8 +29,12 @@ class Listing(models.Model):
     category = models.CharField(max_length=128)
     active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return f"{self.title}"
+
 
 class Orders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    quantity = models.DecimalField(max_digits=19, decimal_places=2, default=1)
 

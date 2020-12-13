@@ -5,6 +5,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
+from django.contrib import messages
+
 from .models import *
 
 
@@ -144,13 +146,30 @@ def create(request):
                           stock=stock, category=category)
 
     new_listing.save()
-    # messages.add_message(request, messages.SUCCESS, "Listing created")
+    messages.add_message(request, messages.SUCCESS, "Listing created")
     return HttpResponseRedirect(reverse("view", args=(new_listing.pk,)))
 
 
 def view_listing(request, pid):
+    if request.method == "POST":
+        user = request.user
+        quantity = int(request.POST.get("quantity"))
+        listing = Listing.objects.get(pk=pid)
+        new_order = Orders(user=user, listing=listing, quantity=quantity)
+        new_order.save()
+        listing.stock -= quantity
+
+        if (listing.stock == 0):
+            listing.active == False
+
+        listing.save()
+        messages.add_message(request, messages.SUCCESS, "Order successful")
+
+        return render(request, "PickAppDemo/listing.html", {
+            "listing": listing,
+        })
+
     listing = Listing.objects.get(pk=pid)
-    print("pid", pid)
 
     return render(request, "PickAppDemo/listing.html", {
         "listing": listing,
@@ -178,7 +197,6 @@ def search(request):
 
 
 def categories(request):
-
     listings = Listing.objects.all()
     category_list = []
 
@@ -187,6 +205,18 @@ def categories(request):
             category_list.append(listing.category)
 
     return render(request, "PickAppDemo/categories.html", {
-        "categories": categories
+        "categories": category_list
     })
 
+
+def get_category(request, ctg):
+    listings = Listing.objects.all()
+    list = []
+
+    for l in listings:
+        if l.category == ctg and l.active:
+            list.append(l)
+
+    return render(request, "PickAppDemo/index.html", {
+        "products": list
+    })
