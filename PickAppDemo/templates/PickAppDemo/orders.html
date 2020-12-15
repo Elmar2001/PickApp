@@ -4,11 +4,13 @@
     {% if orders %}
         {% for order in orders %}
 
-            <img src="{{ order.listing.image }}" alt="Listing Image" height="80px" style="float: left; margin: 2px 15px; ">
+            <img src="{{ order.listing.image }}" alt="Listing Image" height="150px" style="float: left; margin: 2px 15px; ">
             Title: <a href="/view/{{ order.listing.pk }}"><strong>{{ order.listing.title }}</strong></a><br>
             Price: <strong>${{ order.listing.price }}</strong><br>
             Quantity: <strong>{{ order.quantity }}</strong><br>
-            Store: <strong>{{ order.listing.store.user }}</strong>
+            Store: <strong>{{ order.listing.store.user }}</strong><br>
+            Customer: <strong>{{ order.user }}</strong><br>
+            Pick-up date: <strong>{{ order.date }}</strong>
             <hr>
 
         {% endfor %}

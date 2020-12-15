@@ -14,6 +14,7 @@ urlpatterns = [
     path("orders", views.orders, name="orders"),
     path("order/<int:pid>", views.view_listing, name="order"),
     path("search", views.search, name="search"),
+    path("store/<str:store_name>", views.store, name="store")
 
 ]
 

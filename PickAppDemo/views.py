@@ -28,10 +28,7 @@ def login_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
-        print("LOGIN")
-        print(username)
-        print(password)
-        print(user)
+
         # Check if authentication successful
         if user is not None:
             login(request, user)
@@ -42,10 +39,6 @@ def login_view(request):
             })
     else:
         return render(request, "PickAppDemo/login.html")
-
-
-def categories(request):
-    pass
 
 
 def logout_view(request):
@@ -68,8 +61,6 @@ def register(request):
 
         # Attempt to create new user
         try:
-            # user = User.objects.create_user(username, email, password)
-            # user.is_customer=True;
             user = User(username=username, email=email, is_customer=True)
             user.set_password(password)
 
@@ -154,13 +145,15 @@ def view_listing(request, pid):
     if request.method == "POST":
         user = request.user
         quantity = int(request.POST.get("quantity"))
+        date = request.POST.get("time")
         listing = Listing.objects.get(pk=pid)
-        new_order = Orders(user=user, listing=listing, quantity=quantity)
+        new_order = Orders(user=user, store=listing.store.user, listing=listing, quantity=quantity, date=date)
         new_order.save()
         listing.stock -= quantity
 
         if listing.stock == 0:
             listing.active = False
+        print(date)
 
         listing.save()
         messages.add_message(request, messages.SUCCESS, "Order successful")
@@ -169,8 +162,9 @@ def view_listing(request, pid):
             "listing": listing,
         })
 
-    listing = Listing.objects.get(pk=pid)
+    # just view the listing
 
+    listing = Listing.objects.get(pk=pid)
     return render(request, "PickAppDemo/listing.html", {
         "listing": listing,
     })
@@ -179,7 +173,16 @@ def view_listing(request, pid):
 def orders(request):
     if request.method == "POST":
         pass
-    orders = Orders.objects.filter(user=request.user)
+
+    print(request.user.is_store)
+    print(request.user.is_customer)
+
+
+    if request.user.is_customer:
+        orders = Orders.objects.filter(user=request.user).order_by('-id')
+    elif request.user.is_store:
+        orders = Orders.objects.filter(store=request.user).order_by('-id')
+
     return render(request, "PickAppDemo/orders.html", {
         "orders": orders
     })
@@ -219,4 +222,14 @@ def get_category(request, ctg):
 
     return render(request, "PickAppDemo/index.html", {
         "products": list
+    })
+
+
+def store(request, store_name):
+    usr = User.objects.get(username=store_name)
+    store = Store.objects.get(user=usr)
+    store_listings = Listing.objects.filter(store=store)
+
+    return render(request, "PickAppDemo/index.html", {
+        "products": store_listings
     })
