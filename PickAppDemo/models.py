@@ -38,6 +38,7 @@ class Orders(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=19, decimal_places=0, default=1)
     date = models.DateTimeField(auto_now_add=False)
+    completed = models.BooleanField("completed", default=False)
 
     def __str__(self):
         return f"{self.user} purchased {self.quantity} {self.listing}"

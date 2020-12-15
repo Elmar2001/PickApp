@@ -10,15 +10,7 @@
         <div class="alert alert-primary">This listing is closed.
     {% endif %}
 
-    {% if user.is_authenticated %}
-        {% if listing.active %}
-            <form class="" action="/close/{{ listing.id }}" method="post">
-                {% csrf_token %}
-                <input class="btn btn-primary" type="submit" name="" value="Close Listing"
-                       style="background-color: #ff0000; margin: 10px;">
-            </form>
-        {% endif %}
-    {% endif %}
+
 
     <!-- Listing -->
     <img src="{{ listing.image }}" alt="Listing Image" height="300px">

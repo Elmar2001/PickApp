@@ -10,9 +10,6 @@ from django.contrib import messages
 from .models import *
 
 
-# Create your views here.
-
-
 def index(request):
     products = Listing.objects.filter(active=True)
 
@@ -34,6 +31,7 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
+            messages.add_message(request, messages.SUCCESS, "Sign in successful")
             return render(request, "PickAppDemo/login.html", {
                 "message": "Invalid username and/or password."
             })
@@ -43,6 +41,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
+    messages.add_message(request, messages.WARNING, "Logout successful")
     return HttpResponseRedirect(reverse("index"))
 
 
@@ -149,10 +148,11 @@ def view_listing(request, pid):
         listing = Listing.objects.get(pk=pid)
         new_order = Orders(user=user, store=listing.store.user, listing=listing, quantity=quantity, date=date)
         new_order.save()
-        listing.stock -= quantity
+        listing.stock -= quantity   # remove the purchased quantity from stock
 
-        if listing.stock == 0:
+        if listing.stock == 0:     # deactivate the listing if stock is zero
             listing.active = False
+
         print(date)
 
         listing.save()
@@ -162,8 +162,7 @@ def view_listing(request, pid):
             "listing": listing,
         })
 
-    # just view the listing
-
+    # view the listing
     listing = Listing.objects.get(pk=pid)
     return render(request, "PickAppDemo/listing.html", {
         "listing": listing,
@@ -171,21 +170,23 @@ def view_listing(request, pid):
 
 
 def orders(request):
-    if request.method == "POST":
-        pass
+    if request.user.is_customer:    # if the user is a customer
+        orders = Orders.objects.filter(user=request.user, completed=False).order_by('-id')
 
-    print(request.user.is_store)
-    print(request.user.is_customer)
-
-
-    if request.user.is_customer:
-        orders = Orders.objects.filter(user=request.user).order_by('-id')
-    elif request.user.is_store:
-        orders = Orders.objects.filter(store=request.user).order_by('-id')
+    else:   # the user is a store
+        orders = Orders.objects.filter(store=request.user, completed=False).order_by('-id')
 
     return render(request, "PickAppDemo/orders.html", {
         "orders": orders
     })
+
+
+def complete(request, order_id):
+    order = Orders.objects.get(pk=order_id)
+    order.completed = True
+    order.save()
+    messages.add_message(request, messages.SUCCESS, "Order completed")
+    return HttpResponseRedirect(reverse("orders"))
 
 
 def search(request):
@@ -196,7 +197,6 @@ def search(request):
             "results": results
         })
     return render(request, "PickAppDemo/search.html")
-    pass
 
 
 def categories(request):
@@ -212,12 +212,12 @@ def categories(request):
     })
 
 
-def get_category(request, ctg):
+def get_category(request, category_name):
     listings = Listing.objects.all()
     list = []
 
     for l in listings:
-        if l.category == ctg and l.active:
+        if l.category == category_name and l.active:
             list.append(l)
 
     return render(request, "PickAppDemo/index.html", {
@@ -226,9 +226,9 @@ def get_category(request, ctg):
 
 
 def store(request, store_name):
-    usr = User.objects.get(username=store_name)
-    store = Store.objects.get(user=usr)
-    store_listings = Listing.objects.filter(store=store)
+    user = User.objects.get(username=store_name)
+    store = Store.objects.get(user=user)
+    store_listings = Listing.objects.filter(store=store, active=True)   # get active listings of a store
 
     return render(request, "PickAppDemo/index.html", {
         "products": store_listings
