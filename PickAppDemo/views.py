@@ -11,7 +11,7 @@ from .models import *
 
 
 def index(request):
-    products = Listing.objects.filter(active=True)
+    products = Listing.objects.filter(active=True)  # get only active listings
 
     return render(request, "PickAppDemo/index.html", {
         "products": products
@@ -31,7 +31,7 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
-            messages.add_message(request, messages.SUCCESS, "Sign in successful")
+            messages.add_message(request, messages.ERROR, "Sign in unsuccessful")
             return render(request, "PickAppDemo/login.html", {
                 "message": "Invalid username and/or password."
             })
@@ -41,10 +41,11 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    messages.add_message(request, messages.WARNING, "Logout successful")
+    messages.add_message(request, messages.SUCCESS, "Logout successful")
     return HttpResponseRedirect(reverse("index"))
 
 
+# register functionality for customers
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -74,6 +75,7 @@ def register(request):
         return render(request, "PickAppDemo/register.html")
 
 
+# register functionality for stores
 def register_store(request):
     if request.method == "POST":
         username = request.POST["store_username"]
@@ -91,7 +93,6 @@ def register_store(request):
 
         # Attempt to create new user
         try:
-            # store_user = User.objects.create_user(username, email, password)
             store_user = User(username=username, email=email, is_store=True)
             store_user.set_password(password)
 
@@ -105,8 +106,7 @@ def register_store(request):
             })
         login(request, store_user)
         return HttpResponseRedirect(reverse("index"))
-    else:
-        return render(request, "PickAppDemo/storeRegister.html")
+    return render(request, "PickAppDemo/storeRegister.html")
 
 
 @login_required(login_url='/login')
@@ -122,7 +122,7 @@ def create(request):
     stock = request.POST.get("stock")
     category = request.POST.get("category")
 
-    if image == "":
+    if image == "":  # default image if blank
         image = "https://i.imgur.com/GQPN5Q9.jpg"
 
     if price == "":
@@ -140,20 +140,19 @@ def create(request):
     return HttpResponseRedirect(reverse("view", args=(new_listing.pk,)))
 
 
+# view a listing and order
 def view_listing(request, pid):
-    if request.method == "POST":
+    if request.method == "POST":  # order
         user = request.user
         quantity = int(request.POST.get("quantity"))
         date = request.POST.get("time")
         listing = Listing.objects.get(pk=pid)
         new_order = Orders(user=user, store=listing.store.user, listing=listing, quantity=quantity, date=date)
         new_order.save()
-        listing.stock -= quantity   # remove the purchased quantity from stock
+        listing.stock -= quantity  # remove the purchased quantity from stock
 
-        if listing.stock == 0:     # deactivate the listing if stock is zero
+        if listing.stock == 0:  # deactivate the listing if stock is zero
             listing.active = False
-
-        print(date)
 
         listing.save()
         messages.add_message(request, messages.SUCCESS, "Order successful")
@@ -169,11 +168,12 @@ def view_listing(request, pid):
     })
 
 
+@login_required(login_url='/login')
 def orders(request):
-    if request.user.is_customer:    # if the user is a customer
+    if request.user.is_customer:  # if the user is a customer
         orders = Orders.objects.filter(user=request.user, completed=False).order_by('-id')
 
-    else:   # the user is a store
+    else:  # the user is a store
         orders = Orders.objects.filter(store=request.user, completed=False).order_by('-id')
 
     return render(request, "PickAppDemo/orders.html", {
@@ -181,14 +181,22 @@ def orders(request):
     })
 
 
+# mark order as completed or cancel order
 def complete(request, order_id):
     order = Orders.objects.get(pk=order_id)
     order.completed = True
+
+    if request.user.is_customer:  # increase stock if customer cancelled the order
+        order.listing.stock += order.quantity
+        order.listing.save()
+
     order.save()
-    messages.add_message(request, messages.SUCCESS, "Order completed")
+    messages.add_message(request, messages.SUCCESS, "Operation successful")
     return HttpResponseRedirect(reverse("orders"))
 
 
+# supports searching titles for now
+# TODO: add searching other fields
 def search(request):
     if request.method == "POST":
         query = request.POST.get("query")
@@ -196,9 +204,11 @@ def search(request):
         return render(request, "PickAppDemo/results.html", {
             "results": results
         })
+
     return render(request, "PickAppDemo/search.html")
 
 
+# show all categories
 def categories(request):
     listings = Listing.objects.all()
     category_list = []
@@ -212,6 +222,7 @@ def categories(request):
     })
 
 
+# see products from a category
 def get_category(request, category_name):
     listings = Listing.objects.all()
     list = []
@@ -228,7 +239,7 @@ def get_category(request, category_name):
 def store(request, store_name):
     user = User.objects.get(username=store_name)
     store = Store.objects.get(user=user)
-    store_listings = Listing.objects.filter(store=store, active=True)   # get active listings of a store
+    store_listings = Listing.objects.filter(store=store, active=True)  # get active listings of a store
 
     return render(request, "PickAppDemo/index.html", {
         "products": store_listings

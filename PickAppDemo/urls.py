@@ -15,6 +15,6 @@ urlpatterns = [
     path("order/<int:pid>", views.view_listing, name="order"),
     path("search", views.search, name="search"),
     path("store/<str:store_name>", views.store, name="store"),
-    path("complete/<int:order_id>", views.complete, name="complete")
+    path("complete/<int:order_id>", views.complete, name="complete")  # pseudo-cancel
 ]
 

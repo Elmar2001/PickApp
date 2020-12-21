@@ -4,22 +4,23 @@
     {% if orders %}
         {% for order in orders %}
 
-            <img src="{{ order.listing.image }}" alt="Listing Image" height="150px"
+            <img src="{{ order.listing.image }}" alt="Listing Image" width = "150px"height="150px"
                  style="float: left; margin: 2px 15px; ">
             Title: <a href="/view/{{ order.listing.pk }}"><strong>{{ order.listing.title }}</strong></a><br>
-            Price: <strong>${{ order.listing.price }}</strong><br>
+            Total: <strong>${{ order.get_total }}</strong><br>
             Quantity: <strong>{{ order.quantity }}</strong><br>
             Store: <strong>{{ order.listing.store.user }}</strong><br>
             Customer: <strong>{{ order.user }}</strong><br>
             Pick-up date: <strong>{{ order.date }}</strong>
 
-            {% if user.is_store%}
+{#            {% if user.is_store%}#}
                     <form class="" action="/complete/{{ order.id }}" method="post">
                         {% csrf_token %}
-                        <input class="btn btn-primary" type="submit" name="" value="Complete"
+                        <input class="btn btn-primary" type="submit" name="" value="{% if user.is_store%} Complete {% else %} Cancel {% endif %}"
                                style="background-color: #ff0000; margin: 10px;">
                     </form>
-            {% endif %}
+{#            {% endif %}#}
+
             <hr>
 
         {% endfor %}

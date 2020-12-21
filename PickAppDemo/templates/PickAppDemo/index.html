@@ -4,10 +4,10 @@
     {% if products %}
         {% for listing in products %}
 
-            <img src="{{ listing.image }}" alt="Listing Image" height="80px" style="float: left; margin: 2px 15px; ">
+            <img src="{{ listing.image }}" alt="Listing Image" width="100px" height="100px" style="float: left; margin: 2px 15px; ">
             Title: <a href="/view/{{ listing.pk }}"><strong>{{ listing.title }}</strong></a><br>
             Price: <strong>${{ listing.price }}</strong><br>
-            Store: <strong>{{ listing.store.user }}</strong>
+            Store: <strong>{{ listing.store.user }}</strong><br><br>
             <hr>
 
         {% endfor %}

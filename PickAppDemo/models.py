@@ -43,3 +43,6 @@ class Orders(models.Model):
     def __str__(self):
         return f"{self.user} purchased {self.quantity} {self.listing}"
 
+    def get_total(self):
+        return self.quantity * self.listing.price
+

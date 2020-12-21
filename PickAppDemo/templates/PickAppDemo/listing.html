@@ -6,11 +6,6 @@
 
 {% block body %}
 
-    {% if not listing.active %}
-        <div class="alert alert-primary">This listing is closed.
-    {% endif %}
-
-
 
     <!-- Listing -->
     <img src="{{ listing.image }}" alt="Listing Image" height="300px">
@@ -31,7 +26,7 @@
     {% if listing.active and user.is_customer %}
         <form class="" action="/order/{{ listing.pk }}" method="post">
             {% csrf_token %}
-            Quantity: <input class="form-control bfh-number" value="quantity" style="width: 50px;margin:10px"
+            Quantity: <input class="form-control bfh-number" value="quantity" style="width: 60px;margin:10px"
                              type="number"
                              name="quantity"
                              min="1" max={{ listing.stock }}>
